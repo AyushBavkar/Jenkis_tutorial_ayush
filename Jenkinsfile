@@ -1,21 +1,31 @@
 pipeline {
     agent any
-  stages {
-        stage('Coding') {
+       stages {
+        stage('Checkout') {
             steps {
-                echo 'Checking Python version'
-                sh 'python3 --version'
+                echo 'Getting source code from GitHub'
+                checkout scm
             }
         }
-        stage('Testing') {
+       stage('Build Docker Image') {
             steps {
-                echo 'Testing the application'
+                echo 'Building Docker image'
+                sh 'docker build -t ayush-tutorial-app .'
             }
         }
-        stage('Deployment') {
+        stage('Run Python Application') {
             steps {
-                sh 'python3 app.py'
+                echo 'Running Python application inside Docker'
+                sh 'docker run --rm ayush-tutorial-app'
             }
+        }
+    }
+    post {
+        success {
+            echo 'Tutorial 5 completed successfully!'
+        }
+        failure {
+            echo 'Tutorial 5 failed. Check the Console Output.'
         }
     }
 }
